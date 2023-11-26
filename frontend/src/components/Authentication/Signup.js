@@ -31,35 +31,43 @@ const Signup = () => {
             });
             return;
         }
+
+          if (pics.type !== "image/jpeg" && pics.type !== "image/png") {
+           toast({
+            title: "Please Select a JPEG or PNG Image!",
+            status: "warning",
+            duration: 5000,
+            isClosable: true,
+            position: "bottom",
+      });
+      setLoading(false);
+      return;
+    }
         
         if (pics.type === "image/jpeg" || pics.type === "image/png") {
             const data = new FormData();
             data.append("file", pics);
             data.append("upload_preset", "chat-app");
             data.append("cloud_name", "saipronoti");
-            fetch("https://api.cloudinary.com/v1_1/saipronoti", {
-                method: "post",
-                body: data,
-            }).then((res) => res.json())
-                .then((data) => {
-                    setPic(data.url.toString());
-                    setLoading(false);
+            axios.post("https://api.cloudinary.com/v1_1/saipronoti/image/upload", data)
+                .then((res) =>
+                {
+                   console.log("Cloudinary response:", res);
+                   setPic(res.data.url.toString());
+                   setLoading(false); 
+                    toast({
+                        title: "Image uploaded successfully",
+                        status: "success",
+                        duration: 5000,
+                        isClosable: true,
+                        position: "bottom",
+                    });    
                 })
                 .catch((err) => {
-                    console.log(err);
-                    setLoading(false);
+                     console.log("Cloudinary error:", err);
+                     setLoading(false);
                 });
-        } else {
-            toast({
-                title: "Please select an image!",
-                status: "warning",
-                duration: 5000,
-                isClosable: true,
-                position: "bottom",
-            });
-            setLoading(false);
-            return;
-        }
+        } 
     };
 
     const submitHandler = async () => {
