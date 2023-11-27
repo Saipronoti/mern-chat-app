@@ -14,7 +14,7 @@ const app = express();
 app.use(express.json());// to accept json data
 
 app.use(cors({
-  origin: 'localhost:3000/'
+  origin: 'localhost:3000/*'
 }))
 app.get('/', (req, res) => {
     res.send("API is running");
