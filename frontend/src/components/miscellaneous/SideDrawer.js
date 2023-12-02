@@ -1,10 +1,11 @@
 import { Box, Text } from "@chakra-ui/layout";
-import { Menu, MenuButton, Tooltip } from "@chakra-ui/react";
+import { Menu, MenuButton, Tooltip, MenuList, MenuItem, MenuDivider } from "@chakra-ui/react";
 import { BellIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import { Button } from "@chakra-ui/button";
 import { Avatar } from "@chakra-ui/avatar";
 import React, { useState } from 'react'
 import { ChatState } from '../../Context/ChatProvider';
+import ProfileModal from "./ProfileModal";
 
 const SideDrawer = () => {
     const [search, setSearch] = useState("");
@@ -46,8 +47,15 @@ const SideDrawer = () => {
                     </Menu>
                     <Menu>
                         <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                            <Avatar size='sm' cursor='pointer' name={user.name} />
+                            <Avatar size='sm' cursor='pointer' name={user.name} src={user.pic} />
                         </MenuButton>
+                        <MenuList>
+                            <ProfileModal user={user}>
+                                 <MenuItem>My Profile</MenuItem> 
+                            </ProfileModal>
+                            <MenuDivider />
+                            <MenuItem>Logout</MenuItem>
+                        </MenuList>
                      </Menu>   
                 </div>
 
