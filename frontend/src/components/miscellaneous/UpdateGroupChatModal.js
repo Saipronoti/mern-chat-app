@@ -12,6 +12,7 @@ import {
   useToast,
   Box,
 } from "@chakra-ui/react";
+import axios from "axios";
 import { useState } from "react";
 import { IconButton } from "@chakra-ui/button";
 import { useDisclosure } from "@chakra-ui/hooks";
@@ -30,7 +31,44 @@ const UpdateGroupChatModal = ({fetchAgain,setFetchAgain}) => {
 
     const { selectedChat, setSelectedChat, user } = ChatState();
     const handleRemoveFromGroup = () => { };
-    const handleRenameGroup = () => { };
+    const handleRenameGroup = async () => { 
+         if (!groupChatName) return;
+
+    try {
+      setRenameLoading(true);
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+      const { data } = await axios.put(
+        `/api/chat/rename`,
+        {
+          chatId: selectedChat._id,
+          chatName: groupChatName,
+        },
+        config
+      );
+
+      console.log(data._id);
+      // setSelectedChat("");
+      setSelectedChat(data);
+      setFetchAgain(!fetchAgain);
+      setRenameLoading(false);
+    } catch (error) {
+      toast({
+        title: "Error Occured!",
+        description: error.response.data.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      setRenameLoading(false);
+    }
+    setGroupChatName("");
+    };
+    const handleSearch = () => { };
     
 
     return (
@@ -46,7 +84,7 @@ const UpdateGroupChatModal = ({fetchAgain,setFetchAgain}) => {
                         d="flex"
                         justifyContent="center"
                     >{selectedChat.chatName}</ModalHeader>
-          <ModalCloseButton />
+                    <ModalCloseButton />
                     <ModalBody>
                         <Box w="100%" d="flex" flexWrap="wrap" pb={3}>
                         {selectedChat.users.map((u) => (
@@ -73,12 +111,19 @@ const UpdateGroupChatModal = ({fetchAgain,setFetchAgain}) => {
               >
                 Update
               </Button>
+              </FormControl>
+              <FormControl>
+              <Input
+                placeholder="Add User to group"
+                mb={1}
+                onChange={(e) => handleSearch(e.target.value)}
+              />
             </FormControl>
-                   </ModalBody>
+            </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme='blue' mr={3} onClick={onClose}>
-              Close
+            <Button onClick={() => handleRemoveFromGroup(user)} colorScheme="red">
+              Leave Group
             </Button>
           </ModalFooter>
         </ModalContent>
