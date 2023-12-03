@@ -11,6 +11,7 @@ import {
   Input,
   useToast,
   Box,
+  Spinner,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useState } from "react";
@@ -18,7 +19,9 @@ import { IconButton } from "@chakra-ui/button";
 import { useDisclosure } from "@chakra-ui/hooks";
 import { ViewIcon } from '@chakra-ui/icons';
 import { ChatState } from "../../Context/ChatProvider";
-import  UserBadgeItem  from "../userAvatar/UserBadgeItem";
+import UserBadgeItem from "../userAvatar/UserBadgeItem";
+import UserListItem  from "../userAvatar/UserListItem";
+
 
 const UpdateGroupChatModal = ({fetchAgain,setFetchAgain}) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -31,6 +34,8 @@ const UpdateGroupChatModal = ({fetchAgain,setFetchAgain}) => {
 
     const { selectedChat, setSelectedChat, user } = ChatState();
     const handleRemoveFromGroup = () => { };
+    const handleAddUser = () => { };
+    
     const handleRenameGroup = async () => { 
          if (!groupChatName) return;
 
@@ -68,7 +73,37 @@ const UpdateGroupChatModal = ({fetchAgain,setFetchAgain}) => {
     }
     setGroupChatName("");
     };
-    const handleSearch = () => { };
+   
+
+    const handleSearch = async(query) => {
+        setSearch(query);
+        if (!query) {
+            return;
+        }
+        try {
+            setLoading(true);
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                },
+            };
+            const { data } = await axios.get(`/api/user?search=${search}`, config);
+            console.log(data);
+            setLoading(false);
+            setSearchResult(data);
+        }
+        catch (error) {
+            toast({
+            title: "Error Occured!",
+            description: "Failed to Load the Search Results",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+            position: "bottom-left",
+      });
+            
+        }
+     };
     
 
     return (
@@ -119,6 +154,17 @@ const UpdateGroupChatModal = ({fetchAgain,setFetchAgain}) => {
                 onChange={(e) => handleSearch(e.target.value)}
               />
             </FormControl>
+            {loading ? (
+              <Spinner size="lg" />
+            ) : (
+              searchResult?.map((user) => (
+                <UserListItem
+                  key={user._id}
+                  user={user}
+                  handleFunction={() => handleAddUser(user)}
+                />
+              ))
+            )}
             </ModalBody>
 
           <ModalFooter>
