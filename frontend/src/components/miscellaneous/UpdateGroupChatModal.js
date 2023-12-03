@@ -17,6 +17,7 @@ import { IconButton } from "@chakra-ui/button";
 import { useDisclosure } from "@chakra-ui/hooks";
 import { ViewIcon } from '@chakra-ui/icons';
 import { ChatState } from "../../Context/ChatProvider";
+import  UserBadgeItem  from "../userAvatar/UserBadgeItem";
 
 const UpdateGroupChatModal = ({fetchAgain,setFetchAgain}) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -27,7 +28,8 @@ const UpdateGroupChatModal = ({fetchAgain,setFetchAgain}) => {
     const [renameloading, setRenameLoading] = useState(false);
     const toast = useToast();
 
-    const { selectedChat, setSelectedChat, user } =ChatState();
+    const { selectedChat, setSelectedChat, user } = ChatState();
+    const handleRemoveFromGroup = () => {};
     return (
     <>
         <IconButton d={{ base: "flex" }} icon={<ViewIcon />} onClick={onOpen} />
@@ -35,10 +37,22 @@ const UpdateGroupChatModal = ({fetchAgain,setFetchAgain}) => {
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
-                    <ModalHeader>{selectedChat.chatName}</ModalHeader>
+                    <ModalHeader
+                        fontSize="35px"
+                        fontFamily="Work sans"
+                        d="flex"
+                        justifyContent="center"
+                    >{selectedChat.chatName}</ModalHeader>
           <ModalCloseButton />
-          <ModalBody>
-          </ModalBody>
+                    <ModalBody>
+                        {selectedChat.users.map((u) => (
+                           <UserBadgeItem
+                           key={u._id}
+                           user={u}
+                           handleFunction={() => handleRemoveFromGroup(u)}
+                />
+                       ))} 
+                   </ModalBody>
 
           <ModalFooter>
             <Button colorScheme='blue' mr={3} onClick={onClose}>
