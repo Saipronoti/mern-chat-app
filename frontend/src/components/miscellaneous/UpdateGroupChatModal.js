@@ -29,7 +29,10 @@ const UpdateGroupChatModal = ({fetchAgain,setFetchAgain}) => {
     const toast = useToast();
 
     const { selectedChat, setSelectedChat, user } = ChatState();
-    const handleRemoveFromGroup = () => {};
+    const handleRemoveFromGroup = () => { };
+    const handleRenameGroup = () => { };
+    
+
     return (
     <>
         <IconButton d={{ base: "flex" }} icon={<ViewIcon />} onClick={onOpen} />
@@ -45,13 +48,32 @@ const UpdateGroupChatModal = ({fetchAgain,setFetchAgain}) => {
                     >{selectedChat.chatName}</ModalHeader>
           <ModalCloseButton />
                     <ModalBody>
+                        <Box w="100%" d="flex" flexWrap="wrap" pb={3}>
                         {selectedChat.users.map((u) => (
                            <UserBadgeItem
                            key={u._id}
                            user={u}
                            handleFunction={() => handleRemoveFromGroup(u)}
                 />
-                       ))} 
+                        ))} 
+                        </Box>
+                        <FormControl d="flex">
+              <Input
+                placeholder="Chat Name"
+                mb={3}
+                value={groupChatName}
+                onChange={(e) => setGroupChatName(e.target.value)}
+              />
+              <Button
+                variant="solid"
+                colorScheme="teal"
+                ml={1}
+                isLoading={renameloading}
+                onClick={handleRenameGroup}
+              >
+                Update
+              </Button>
+            </FormControl>
                    </ModalBody>
 
           <ModalFooter>
