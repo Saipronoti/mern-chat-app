@@ -4,7 +4,7 @@ import { ArrowBackIcon } from "@chakra-ui/icons";
 import { IconButton, useToast } from "@chakra-ui/react";
 import { useEffect,useState } from "react";
 import { Spinner, FormControl, Input } from "@chakra-ui/react";
-import { getSender, getSenderFullProfile } from '../config/ChatLogics';
+import { getSender, getSenderFull } from '../config/ChatLogics';
 import ProfileModal from "./miscellaneous/ProfileModal";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
 import ScrollableChat from "./ScrollableChat";
@@ -116,7 +116,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain}) => {
                       />
                       {!selectedChat.isGroupChat ? (
                           <>{getSender(user, selectedChat.users)}
-                            <ProfileModal user={getSenderFullProfile(user, selectedChat.users)} />
+                            <ProfileModal user={getSenderFull(user, selectedChat.users)} />
                           </>
                       ) : (
                               <>
