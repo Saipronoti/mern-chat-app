@@ -2,7 +2,7 @@ import { Box, Text} from "@chakra-ui/layout";
 import { ChatState } from "../Context/ChatProvider";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { IconButton, useToast } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect,useState } from "react";
 import { Spinner, FormControl, Input } from "@chakra-ui/react";
 import { getSender, getSenderFullProfile } from '../config/ChatLogics';
 import ProfileModal from "./miscellaneous/ProfileModal";
@@ -17,6 +17,43 @@ const SingleChat = ({ fetchAgain, setFetchAgain}) => {
     const [newMessage, setNewMessage] = useState();
 
     const toast = useToast();
+
+    const fetchMessages = async () => {
+        if (!selectedChat) return; //no chat selected
+
+        try {
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                },
+            };
+            setLoading(true);
+
+            const { data } = await axios.get(
+                `/api/message/${selectedChat._id}`,
+                config
+            );
+
+            console.log(messages);
+            setMessages(data); //set data inside state
+            setLoading(false);
+        }
+        catch (error) {
+            toast({
+                title: "Error Occured!",
+                description: "Failed to Load the Messages",
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+                position: "bottom",
+            });
+            
+        }
+    };
+
+    useEffect(() => {
+        fetchMessages();
+    }, [selectedChat]);// when user changes chat call fetch messages again
 
     const sendMessage = async(event) => {
         if (event.key === "Enter" && newMessage) {
