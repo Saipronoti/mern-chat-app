@@ -7,6 +7,7 @@ import { Spinner, FormControl, Input } from "@chakra-ui/react";
 import { getSender, getSenderFullProfile } from '../config/ChatLogics';
 import ProfileModal from "./miscellaneous/ProfileModal";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
+import ScrollableChat from "./ScrollableChat";
 import axios from "axios";
 import "./styles.css";
 
@@ -148,7 +149,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain}) => {
                               margin="auto"
                           />
                       ) : (
-                              <div className="messages">{/* Messages here */ }</div>        
+                              <div className="messages">
+                                <ScrollableChat messages={messages} />
+                                  {/* Messages here */}</div>        
                       )}  
                       <FormControl onKeyDown={sendMessage} isRequired mt={3}>
                           <Input
