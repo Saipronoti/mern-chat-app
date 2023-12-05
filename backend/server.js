@@ -32,4 +32,15 @@ app.use(errorHandler)
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(5000, console, console.log(`Server Started on PORT ${PORT}`.yellow.bold));
+const server = app.listen(5000, console, console.log(`Server Started on PORT ${PORT}`.yellow.bold));
+
+const io = require("socket.io")(server, {
+  pingTimeout: 6000,// if user doesnt send message in 6 sec connection will be closed to save network bandwidth
+  cors: {
+    origin: "http://localhost:3000",
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("connected to socket.io");
+})
