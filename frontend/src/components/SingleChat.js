@@ -2,6 +2,8 @@ import { Box, Text} from "@chakra-ui/layout";
 import { ChatState } from "../Context/ChatProvider";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { IconButton } from "@chakra-ui/react";
+import { useState } from "react";
+import { Spinner, FormControl, Input } from "@chakra-ui/react";
 import { getSender, getSenderFullProfile } from '../config/ChatLogics';
 import ProfileModal from "./miscellaneous/ProfileModal";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
@@ -9,6 +11,12 @@ import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
 
 const SingleChat = ({ fetchAgain, setFetchAgain}) => {
     const { user, selectedChat, setSelectedChat } = ChatState();
+    const [messages, setMessages] = useState([]); // state to store messages received from backend
+    const [loading, setLoading] = useState(false);
+    const [newMessage, setNewMessage] = useState();
+
+    const sendMessage = () => { };
+    const typingHandler = () => { };
 
   return (
       <>
@@ -53,7 +61,28 @@ const SingleChat = ({ fetchAgain, setFetchAgain}) => {
                      h="300%"
                      borderRadius="lg"
                      overflowY="hidden"
-          ></Box>
+                  >
+                      {loading ? (
+                          <Spinner
+                              size="xl"
+                              w={20}
+                              h={20}
+                              alignSelf="center"
+                              margin="auto"
+                          />
+                      ) : (
+                              <div>{/* Messages here */ }</div>        
+                      )}  
+                      <FormControl onKeyDown={sendMessage} isRequired mt={3}>
+                          <Input
+                              variant="filled"
+                              bg="#E0E0E0"
+                              placeholder="Enter a message .."
+                              onChange={typingHandler}
+                              value={newMessage}
+                          /> 
+                      </FormControl>      
+          </Box>
               </>
           ) : (
                   <Box d="flex" alignItems="center" justifyContent="center" h="100%" >
