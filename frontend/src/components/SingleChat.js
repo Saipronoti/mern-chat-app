@@ -1,12 +1,13 @@
 import { Box, Text} from "@chakra-ui/layout";
 import { ChatState } from "../Context/ChatProvider";
 import { ArrowBackIcon } from "@chakra-ui/icons";
-import { IconButton } from "@chakra-ui/react";
+import { IconButton, useToast } from "@chakra-ui/react";
 import { useState } from "react";
 import { Spinner, FormControl, Input } from "@chakra-ui/react";
 import { getSender, getSenderFullProfile } from '../config/ChatLogics';
 import ProfileModal from "./miscellaneous/ProfileModal";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
+import axios from "axios";
 
 
 const SingleChat = ({ fetchAgain, setFetchAgain}) => {
@@ -15,8 +16,45 @@ const SingleChat = ({ fetchAgain, setFetchAgain}) => {
     const [loading, setLoading] = useState(false);
     const [newMessage, setNewMessage] = useState();
 
-    const sendMessage = () => { };
-    const typingHandler = () => { };
+    const toast = useToast();
+
+    const sendMessage = async(event) => {
+        if (event.key === "Enter" && newMessage) {
+            try {
+                const config = {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${user.token}`,
+                    },
+                };
+
+                setNewMessage("");
+                const { data } = await axios.post("/api/message", {
+                    content: newMessage,
+                    chatId: selectedChat._id,
+                }, config);
+
+                console.log(data);
+
+                setNewMessage("");
+                setMessages([...messages, data]);// appending latest message to existing message
+            } catch (error) {
+                toast({
+                    title: "Error Occured!",
+                    description: "Failed to send the message",
+                    status: "error",
+                    duration: 5000,
+                    isClosable: true,
+                    position: "bottom",
+                });
+            }
+        }
+     };
+    const typingHandler = (e) => {
+        setNewMessage(e.target.value);
+
+        //typing indicator logic
+     };
 
   return (
       <>
