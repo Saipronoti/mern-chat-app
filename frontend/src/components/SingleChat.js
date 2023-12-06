@@ -44,6 +44,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain}) => {
             console.log(messages);
             setMessages(data); //set data inside state
             setLoading(false);
+            socket.emit("join chat", selectedChat._id);
         }
         catch (error) {
             toast({
