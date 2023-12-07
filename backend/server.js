@@ -53,5 +53,25 @@ io.on("connection", (socket) => {
     socket.join(room);
     console.log("User joined room: " + room);
   });
+
+  socket.on("typing", (room) => socket.in(room).emit("typing")); // create a new socket by the name "typing"
+  socket.on("stop typing", (room) => socket.in(room).emit(" stop typing"));
+
+  socket.on('new message', (newMessageReceived) => {
+    var chat = newMessageReceived.chat;
+
+    if (!chat.users) return console.log("chat.users not defined");
+
+    chat.users.forEach((user) => {
+      if (user._id == newMessageReceived.sender._id) return; //in grp chat messages should be emitted only to users apart from sender,else return
+
+      socket.in(user._id).emit('message received', newMessageReceived);
+    });
+  });
+
+  socket.off("setup", () => {
+    console.log("USER DISCONNECTED");
+    socket.leave(userData._id);
+  });
 });
 
