@@ -19,7 +19,7 @@ var socket, selectedChatCompare;
 
 
 const SingleChat = ({ fetchAgain, setFetchAgain}) => {
-    const { user, selectedChat, setSelectedChat } = ChatState();
+    const { user, selectedChat, setSelectedChat, notification, setNotification } = ChatState();
     const [messages, setMessages] = useState([]); // state to store messages received from backend
     const [loading, setLoading] = useState(false);
     const [newMessage, setNewMessage] = useState();
@@ -53,8 +53,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain}) => {
                 `/api/message/${selectedChat._id}`,
                 config
             );
-
-            console.log(messages);
             setMessages(data); //set data inside state
             setLoading(false);
             socket.emit("join chat", selectedChat._id);
@@ -85,10 +83,16 @@ const SingleChat = ({ fetchAgain, setFetchAgain}) => {
         selectedChatCompare = selectedChat;
     }, [selectedChat]);// when user changes chat call fetch messages again
 
+    console.log(notification, "-------------");
+
     useEffect(() => {
         socket.on('message received', (newMessageReceived) => {
             if (!selectedChatCompare || selectedChatCompare._id !== newMessageReceived.chatId._id) { // if another user sends message while another chat room is open
                 //give notification
+                if (!notification.includes(newMessageReceived)) {
+                    setNotification([newMessageReceived, ...notification]);
+                    setFetchAgain(!fetchAgain);
+                }
             } else {
                 setMessages([...messages, newMessageReceived]);
             }
@@ -112,7 +116,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain}) => {
                     chatId: selectedChat._id,
                 }, config);
 
-                console.log(data);
                 socket.emit('new message', data);
                // setNewMessage("");
                 setMessages([...messages, data]);// appending latest message to existing message
