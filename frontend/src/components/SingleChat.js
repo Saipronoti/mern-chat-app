@@ -83,7 +83,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain}) => {
         selectedChatCompare = selectedChat;
     }, [selectedChat]);// when user changes chat call fetch messages again
 
-    console.log(notification, "-------------");
 
     useEffect(() => {
         socket.on('message received', (newMessageReceived) => {
