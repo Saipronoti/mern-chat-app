@@ -4,8 +4,14 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon backend/server.js"
+    "start": "nodemon backend/server.js",
+    "server": "nodemon backend/server.js",
+    "build": "npm install  && npm install --prefix frontend && npm run build --prefix frontend"
   },
+   "keywords": [
+    "mern",
+    "chat-app"
+  ],
   "author": "Saipronoti Mukherjee",
   "license": "ISC",
   "dependencies": {
