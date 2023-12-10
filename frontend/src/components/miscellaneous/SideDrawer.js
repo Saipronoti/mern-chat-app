@@ -141,7 +141,7 @@ const SideDrawer = () => {
                             <BellIcon  fontSize="2xl" m={1} />
                         </MenuButton>
                         <MenuList pl={2}>{!notification.length && "No new messages"}
-                            {notification.map((notif) => (
+                            {notification.map(notif => (
                                 <MenuItem key={notif._id}
                                     onClick={() => {
                                         setSelectedChat(notif.chat);

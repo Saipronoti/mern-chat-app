@@ -71,7 +71,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain}) => {
     };
 
     useEffect(() => {
-        socket = io(ENDPOINT);
+        socket = io(ENDPOINT);// starting the socket
         socket.emit("setup", user);
         socket.on("connected", () => setSocketConnected(true));
         socket.on("typing", () => setIsTyping(true));
@@ -80,16 +80,17 @@ const SingleChat = ({ fetchAgain, setFetchAgain}) => {
 
     useEffect(() => {
         fetchMessages();
-        selectedChatCompare = selectedChat;
+        selectedChatCompare = selectedChat;// emit message or give notification to user
     }, [selectedChat]);// when user changes chat call fetch messages again
 
 
     useEffect(() => {
-        socket.on('message received', (newMessageReceived) => {
-            if (!selectedChatCompare || selectedChatCompare._id !== newMessageReceived.chatId._id) { // if another user sends message while another chat room is open
+        socket.on("message received", (newMessageReceived) => {
+            // no chat selected
+            if (!selectedChatCompare || selectedChatCompare._id !== newMessageReceived._id) { // if another user sends message while another chat room is open
                 //give notification
-                if (!notification.includes(newMessageReceived)) {
-                    setNotification([newMessageReceived, ...notification]);
+                if (!notification.includes(newMessageReceived)) { 
+                    setNotification([newMessageReceived,...notification]);
                     setFetchAgain(!fetchAgain);
                 }
             } else {
@@ -100,7 +101,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain}) => {
 
     const sendMessage = async(event) => {
         if (event.key === "Enter" && newMessage) {
-            socket.emit("stop typing", selectedChat._id);
+            socket.emit('stop typing', selectedChat._id);
             try {
                 const config = {
                     headers: {
@@ -115,7 +116,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain}) => {
                     chatId: selectedChat._id,
                 }, config);
 
-                socket.emit('new message', data);
+                socket.emit("new message", data);
                // setNewMessage("");
                 setMessages([...messages, data]);// appending latest message to existing message
             } catch (error) {
@@ -140,13 +141,13 @@ const SingleChat = ({ fetchAgain, setFetchAgain}) => {
       setTyping(true);
       socket.emit("typing", selectedChat._id);
     }
-    let lastTypingTime = new Date().getTime();
+    let lastTypingTime = new Date().getTime();// DEbouncing function to show after 3s.
     var timerLength = 3000;
     setTimeout(() => {
       var timeNow = new Date().getTime();
       var timeDiff = timeNow - lastTypingTime;
       if (timeDiff >= timerLength && typing) {
-        socket.emit("stop typing", selectedChat._id);
+        socket.emit('stop typing', selectedChat._id);
         setTyping(false);
       }
     }, timerLength);

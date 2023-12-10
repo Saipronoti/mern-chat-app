@@ -50,21 +50,21 @@ const PORT = process.env.PORT || 5000;
 const server = app.listen(5000, console, console.log(`Server Started on PORT ${PORT}`.yellow.bold));
 
 const io = require("socket.io")(server, {
-  pingTimeout: 6000,// if user doesnt send message in 6 sec connection will be closed to save network bandwidth
+  pingTimeout: 60000,// if user doesnt send message in 60 sec connection will be closed to save network bandwidth
   cors: {
     origin: "http://localhost:3000",
   },
 });
 
-io.on("connection", (socket) => {
+io.on("connection", (socket) => { // call back
   console.log("connected to socket.io");
 
-  socket.on("setup", (userData) => {
+  socket.on("setup", (userData) => { //user data is sent from frontend and user will join room
     socket.join(userData._id);
     socket.emit("connected");
   });
 
-  socket.on("join chat", (room) => {
+  socket.on("join chat", (room) => {  // creating a socket
     socket.join(room);
     console.log("User joined room: " + room);
   });
@@ -72,15 +72,15 @@ io.on("connection", (socket) => {
   socket.on("typing", (room) => socket.in(room).emit("typing")); // create a new socket by the name "typing"
   socket.on("stop typing", (room) => socket.in(room).emit(" stop typing"));
 
-  socket.on('new message', (newMessageReceived) => {
+  socket.on("new message", (newMessageReceived) => {
     var chat = newMessageReceived.chat;
 
-    if (!chat.users) return console.log("chat.users not defined");
+    if (!chat.users) return console.log("chat.users not defined"); // FIX FOR REAL TIME MESSAGES/NOTIFICATIONS TO BE DEBUGGED FROM HERE
 
     chat.users.forEach((user) => {
       if (user._id == newMessageReceived.sender._id) return; //in grp chat messages should be emitted only to users apart from sender,else return
 
-      socket.in(user._id).emit('message received', newMessageReceived);
+      socket.in(user._id).emit("message received", newMessageReceived);
     });
   });
 

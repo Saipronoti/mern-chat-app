@@ -1,17 +1,11 @@
 {
-  "name": "chat-app",
+  "name": "talk-a-tive",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "node backend/server.js",
-    "server": "nodemon backend/server.js",
-    "build": "npm install && npm install  --prefix frontend && npm run build --prefix frontend"
+    "start": "nodemon backend/server.js"
   },
-  "keywords": [
-    "mern",
-    "chat-app"
-  ],
   "author": "Saipronoti Mukherjee",
   "license": "ISC",
   "dependencies": {
@@ -23,6 +17,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.12.9",
     "nodemon": "^2.0.7",
-    "socket.io": "^4.1.2"
+    "react-notification-badge": "^1.5.1",
+    "socket.io": "^4.7.2"
   }
 }
